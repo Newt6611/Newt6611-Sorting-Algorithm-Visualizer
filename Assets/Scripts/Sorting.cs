@@ -22,8 +22,9 @@ public class Sorting : MonoBehaviour
     public Sprite continue_sprite;
     public TMP_Text algorithm_name;
 
-    // For Insertion Bug...
-    GameObject insertionTemp;
+    // For Bug Fixing...
+    GameObject temp;
+    GameObject[] tempList; // for merge sort
 
     private void Start()
     {
@@ -44,7 +45,7 @@ public class Sorting : MonoBehaviour
             cubes.Clear();
         }
 
-        Destroy(insertionTemp);
+        Destroy(temp);
 
         cubes = new List<GameObject>();
 
@@ -138,41 +139,33 @@ public class Sorting : MonoBehaviour
     // Bubble Sort
     IEnumerator BubbleSort(List<GameObject> c)
     {
-        Transform front, back;
-        
-        for(int i=0; i< c.Count; i++)
+        for(int i=0; i<c.Count; i++)
         {
-            for(int j=i+1; j< c.Count; j++)
+            for(int j=0; j<c.Count - i -1; j++)
             {
                 yield return new WaitForSeconds(speed);
-                LeanTween.color(c[i], Color.red, 0.1f);
-                LeanTween.color(c[j], Color.blue, 0.1f);
+                if(j != i)
+                    LeanTween.color(c[j], Color.yellow, 0.01f);
+                LeanTween.color(c[j+1], Color.blue, 0.01f);
 
-                front = c[i].transform;
-                back = c[j].transform;
-
-                if(front.localScale.y > back.localScale.y)
+                if(c[j].transform.localScale.y > c[j+1].transform.localScale.y)
                 {
+                    // Swap
+                    temp = c[j];
                     yield return new WaitForSeconds(speed);
-                    // Swap array's index GameObject First;
-                    // Then Set new position 
-                    // Use LeanTwean For Animation
+                    LeanTween.moveLocalX(c[j], c[j+1].transform.localPosition.x, speed);
+                    LeanTween.moveLocalZ(c[j], c[j].transform.localPosition.z - 1.5f, speed).setLoopPingPong(1);
+                    c[j] = c[j + 1];
 
-                    GameObject tempIndex = c[i];
-                    Vector3 tempPosition = front.localPosition;
+                    LeanTween.moveLocalX(c[j+1], temp.transform.localPosition.x, speed);
+                    LeanTween.moveLocalZ(c[j + 1], c[j + 1].transform.localPosition.z + 1.5f, speed).setLoopPingPong(1);
+                    c[j + 1] = temp;
 
-                    LeanTween.moveLocalX(front.gameObject, back.localPosition.x, speed);
-                    LeanTween.moveLocalZ(front.gameObject, front.localPosition.z - 1.5f, speed).setLoopPingPong(1);
-                    c[i] = c[j];
-
-                    LeanTween.moveLocalX(back.gameObject, tempPosition.x, speed);
-                    LeanTween.moveLocalZ(back.gameObject, back.localPosition.z + 1.5f, speed).setLoopPingPong(1);
-                    c[j] = tempIndex;
+                    yield return new WaitForSeconds(speed);
                 }
-
                 yield return new WaitForSeconds(speed);
-                LeanTween.color(c[i], Color.white, 0.1f);
-                LeanTween.color(c[j], Color.white, 0.1f);
+                LeanTween.color(c[j], Color.white, 0.01f);
+                LeanTween.color(c[j+1], Color.white, 0.01f);
             }
         }
 
@@ -207,7 +200,7 @@ public class Sorting : MonoBehaviour
 
                     yield return new WaitForSeconds(speed * 1.5f);
                     // Swap
-                    GameObject temp = c[i];
+                    temp = c[i];
                     Vector3 tempPosition = c[i].transform.localPosition;
 
                     LeanTween.moveLocalX(c[i], c[j].transform.localPosition.x, speed);
@@ -218,7 +211,7 @@ public class Sorting : MonoBehaviour
                     LeanTween.moveLocalZ(c[j], c[j].transform.localPosition.z + 1.5f, speed).setLoopPingPong(1);
                     c[j] = temp;
 
-                    yield return new WaitForSeconds(speed);
+                    yield return new WaitForSeconds(speed * 1.5f);
                     LeanTween.color(c[i], Color.white, 0.01f);
                 }
                 yield return new WaitForSeconds(speed);
@@ -227,7 +220,7 @@ public class Sorting : MonoBehaviour
 
             yield return new WaitForSeconds(speed * 1.5f);
             // Swap Again
-            GameObject t = c[i + 1];
+            temp = c[i + 1];
             Vector3 tP = c[i + 1].transform.localPosition;
 
             LeanTween.moveLocalX(c[i + 1], c[right].transform.localPosition.x, speed);
@@ -236,22 +229,24 @@ public class Sorting : MonoBehaviour
 
             LeanTween.moveLocalX(c[right], tP.x, speed);
             LeanTween.moveLocalZ(c[right], c[right].transform.localPosition.z + 1.5f, speed).setLoopPingPong(1);
-            c[right] = t;
+            c[right] = temp;
 
             LeanTween.color(c[i+1], Color.white, 0.01f);
-            yield return new WaitForSeconds(speed);
+            yield return new WaitForSeconds(speed  * 1.5f);
 
             // Partiction End !!!
 
             int p = i + 1;
+            yield return new WaitForSeconds(speed * 1.5f);
             StartCoroutine(QuickSort(c, p + 1, right));
+            yield return new WaitForSeconds(speed * 1.5f);
             StartCoroutine(QuickSort(c, left, p - 1));
         }
 
         // Complete
         if (IsSorted(cubes))
         {
-            yield return new WaitForSeconds(0.1f);
+            yield return new WaitForSeconds(speed);
             StartCoroutine(Complete());
         }
     }
@@ -285,15 +280,15 @@ public class Sorting : MonoBehaviour
 
             yield return new WaitForSeconds(speed);
             // Do Swap
-            GameObject t = c[i];
+            temp = c[i];
 
             LeanTween.moveLocalX(c[i], c[min_index].transform.localPosition.x, speed);
             LeanTween.moveLocalZ(c[i], c[i].transform.localPosition.z - 1.5f, speed).setLoopPingPong(1);
             c[i] = c[min_index];
 
-            LeanTween.moveLocalX(c[min_index], t.transform.localPosition.x, speed);
+            LeanTween.moveLocalX(c[min_index], temp.transform.localPosition.x, speed);
             LeanTween.moveLocalZ(c[min_index], c[min_index].transform.localPosition.z + 1.5f, speed).setLoopPingPong(1);
-            c[min_index] = t;
+            c[min_index] = temp;
 
             yield return new WaitForSeconds(speed);
             LeanTween.color(c[i], Color.cyan, 0.01f);
@@ -302,7 +297,7 @@ public class Sorting : MonoBehaviour
         // Complete
         if(IsSorted(cubes))
         {
-            yield return new WaitForSeconds(speed);
+            yield return new WaitForSeconds(0.01f);
             StartCoroutine(Complete());
         }
     }
@@ -314,15 +309,15 @@ public class Sorting : MonoBehaviour
         {
             yield return new WaitForSeconds(speed);
 
-            insertionTemp = c[i];
-            LeanTween.color(insertionTemp, Color.red, 0.01f);
-            LeanTween.moveLocalY(insertionTemp, numberOfCubes + (c[i].transform.localScale.y / 2), speed);
+            this.temp = c[i];
+            LeanTween.color(this.temp, Color.red, 0.01f);
+            LeanTween.moveLocalY(this.temp, numberOfCubes + (c[i].transform.localScale.y / 2), speed);
 
             int j = i - 1;
 
             float temp = -100; // for animation
 
-            while (j >= 0 && c[j].transform.localScale.y > insertionTemp.transform.localScale.y)
+            while (j >= 0 && c[j].transform.localScale.y > this.temp.transform.localScale.y)
             {
                 yield return new WaitForSeconds(speed);
 
@@ -337,21 +332,21 @@ public class Sorting : MonoBehaviour
             if(temp >= 0)
             {
                 yield return new WaitForSeconds(speed);
-                LeanTween.moveLocalX(insertionTemp, temp, speed);
+                LeanTween.moveLocalX(this.temp, temp, speed);
             }
             yield return new WaitForSeconds(speed);
-            LeanTween.moveLocalY(insertionTemp, insertionTemp.transform.localScale.y / 2.0f, speed);
+            LeanTween.moveLocalY(this.temp, this.temp.transform.localScale.y / 2.0f, speed);
             
-            LeanTween.color(insertionTemp, Color.white, 0.01f);
+            LeanTween.color(this.temp, Color.white, 0.01f);
             //
 
-            c[j + 1] = insertionTemp;
+            c[j + 1] = this.temp;
         }
 
         yield return new WaitForSeconds(0.1f);
         if(IsSorted(cubes))
         {
-            yield return new WaitForSeconds(0.1f);
+            yield return new WaitForSeconds(0.001f);
             StartCoroutine(Complete());
         }
     }
@@ -369,7 +364,7 @@ public class Sorting : MonoBehaviour
         for(int i=n-1; i>=0; i--)
         {
             yield return new WaitForSeconds(speed);
-            GameObject temp = c[0];
+            temp = c[0];
             int tempX = (int)c[0].transform.localPosition.x;
 
             LeanTween.color(c[0], Color.cyan, 0.01f);
@@ -417,7 +412,7 @@ public class Sorting : MonoBehaviour
         {
             yield return new WaitForSeconds(speed);
             // Swap
-            GameObject temp = c[i];
+            temp = c[i];
             int tempX = (int)c[i].transform.localPosition.x;
 
             LeanTween.moveLocalX(c[i], c[largest].transform.localPosition.x, speed);
@@ -457,7 +452,7 @@ public class Sorting : MonoBehaviour
 
         if(IsSorted(cubes))
         {
-            yield return new WaitForSeconds(speed);
+            yield return new WaitForSeconds(0.001f);
             StartCoroutine(Complete());
         }
     }
@@ -478,7 +473,7 @@ public class Sorting : MonoBehaviour
         }
         //
 
-        GameObject[] temp = new GameObject[numberOfCubes];
+        tempList = new GameObject[numberOfCubes];
 
         while(leftIndex <= mid && rightIndex <= high)
         {
@@ -488,7 +483,7 @@ public class Sorting : MonoBehaviour
             {
                 LeanTween.color(c[leftIndex], Color.yellow, 0.01f);
 
-                temp[mergeIndex] = c[leftIndex];
+                tempList[mergeIndex] = c[leftIndex];
                 leftIndex++;
                 yield return new WaitForSeconds(speed);
                 LeanTween.color(c[leftIndex-1], Color.white, 0.01f);
@@ -497,7 +492,7 @@ public class Sorting : MonoBehaviour
             {
                 LeanTween.color(c[rightIndex], Color.yellow, 0.01f);
 
-                temp[mergeIndex] = c[rightIndex];
+                tempList[mergeIndex] = c[rightIndex];
                 rightIndex++;
                 yield return new WaitForSeconds(speed);
                 LeanTween.color(c[rightIndex-1], Color.white, 0.01f);
@@ -507,17 +502,21 @@ public class Sorting : MonoBehaviour
 
         while(leftIndex <= mid)
         {
+            LeanTween.color(c[leftIndex], Color.yellow, 0.01f);
             yield return new WaitForSeconds(speed);
-            temp[mergeIndex] = c[leftIndex];
+            LeanTween.color(c[leftIndex], Color.white, 0.01f);
+            
+            tempList[mergeIndex] = c[leftIndex];
             mergeIndex++;
             leftIndex++;
-
         }
 
         while(rightIndex <= high)
         {
+            LeanTween.color(c[rightIndex], Color.yellow, 0.01f);
             yield return new WaitForSeconds(speed);
-            temp[mergeIndex] = c[rightIndex];
+            LeanTween.color(c[rightIndex], Color.white, 0.01f);
+            tempList[mergeIndex] = c[rightIndex];
             mergeIndex++;
             rightIndex++;
         }
@@ -525,9 +524,9 @@ public class Sorting : MonoBehaviour
         for (int i=low;i<mergeIndex;i++)
         {
             yield return new WaitForSeconds(speed);
-            LeanTween.moveLocalX(temp[i], i, speed);
+            LeanTween.moveLocalX(tempList[i], i, speed);
             
-            c[i] = temp[i];
+            c[i] = tempList[i];
             
             LeanTween.moveLocalZ(c[i], 0f, speed);
             LeanTween.color(c[i], Color.white, speed);
@@ -553,7 +552,7 @@ public class Sorting : MonoBehaviour
     {
         for(int i=0; i<cubes.Count; i++)
         {
-            yield return new WaitForSeconds(0.05f);
+            yield return new WaitForSeconds(0.03f);
             LeanTween.color(cubes[i], Color.green, 0.01f);
             LeanTween.moveLocalZ(cubes[i], 0, speed);
         }
