@@ -154,11 +154,11 @@ public class Sorting : MonoBehaviour
                     temp = c[j];
                     yield return new WaitForSeconds(speed);
                     LeanTween.moveLocalX(c[j], c[j+1].transform.localPosition.x, speed);
-                    LeanTween.moveLocalZ(c[j], c[j].transform.localPosition.z - 1.5f, speed).setLoopPingPong(1);
+                    LeanTween.moveLocalZ(c[j], -1.5f, speed).setLoopPingPong(1);
                     c[j] = c[j + 1];
 
                     LeanTween.moveLocalX(c[j+1], temp.transform.localPosition.x, speed);
-                    LeanTween.moveLocalZ(c[j + 1], c[j + 1].transform.localPosition.z + 1.5f, speed).setLoopPingPong(1);
+                    LeanTween.moveLocalZ(c[j + 1], 1.5f, speed).setLoopPingPong(1);
                     c[j + 1] = temp;
 
                     yield return new WaitForSeconds(speed);
@@ -204,11 +204,11 @@ public class Sorting : MonoBehaviour
                     Vector3 tempPosition = c[i].transform.localPosition;
 
                     LeanTween.moveLocalX(c[i], c[j].transform.localPosition.x, speed);
-                    LeanTween.moveLocalZ(c[i], c[i].transform.localPosition.z - 1.5f, speed).setLoopPingPong(1);
+                    LeanTween.moveZ(c[i], -1.5f, speed).setLoopPingPong(1);
                     c[i] = c[j];
 
                     LeanTween.moveLocalX(c[j], tempPosition.x, speed);
-                    LeanTween.moveLocalZ(c[j], c[j].transform.localPosition.z + 1.5f, speed).setLoopPingPong(1);
+                    LeanTween.moveZ(c[j], 1.5f, speed).setLoopPingPong(1);
                     c[j] = temp;
 
                     yield return new WaitForSeconds(speed * 1.5f);
@@ -224,11 +224,11 @@ public class Sorting : MonoBehaviour
             Vector3 tP = c[i + 1].transform.localPosition;
 
             LeanTween.moveLocalX(c[i + 1], c[right].transform.localPosition.x, speed);
-            LeanTween.moveLocalZ(c[i + 1], c[ i+1 ].transform.localPosition.z - 1.5f, speed).setLoopPingPong(1);
+            LeanTween.moveZ(c[i + 1], -1.5f, speed).setLoopPingPong(1);
             c[i + 1] = c[right];
 
             LeanTween.moveLocalX(c[right], tP.x, speed);
-            LeanTween.moveLocalZ(c[right], c[right].transform.localPosition.z + 1.5f, speed).setLoopPingPong(1);
+            LeanTween.moveZ(c[right], 1.5f, speed).setLoopPingPong(1);
             c[right] = temp;
 
             LeanTween.color(c[i+1], Color.white, 0.01f);
@@ -283,11 +283,11 @@ public class Sorting : MonoBehaviour
             temp = c[i];
 
             LeanTween.moveLocalX(c[i], c[min_index].transform.localPosition.x, speed);
-            LeanTween.moveLocalZ(c[i], c[i].transform.localPosition.z - 1.5f, speed).setLoopPingPong(1);
+            LeanTween.moveLocalZ(c[i], -1.5f, speed).setLoopPingPong(1);
             c[i] = c[min_index];
 
             LeanTween.moveLocalX(c[min_index], temp.transform.localPosition.x, speed);
-            LeanTween.moveLocalZ(c[min_index], c[min_index].transform.localPosition.z + 1.5f, speed).setLoopPingPong(1);
+            LeanTween.moveLocalZ(c[min_index], +1.5f, speed).setLoopPingPong(1);
             c[min_index] = temp;
 
             yield return new WaitForSeconds(speed);
@@ -369,12 +369,12 @@ public class Sorting : MonoBehaviour
 
             LeanTween.color(c[0], Color.cyan, 0.01f);
             LeanTween.moveLocalX(c[0], c[i].transform.localPosition.x, speed);
-            LeanTween.moveLocalZ(c[0], c[0].transform.localPosition.z - 1.5f, speed).setLoopPingPong(1);
+            LeanTween.moveLocalZ(c[0], -1.5f, speed).setLoopPingPong(1);
             c[0] = c[i];
 
             LeanTween.color(c[i], Color.white, 0.01f);
             LeanTween.moveLocalX(c[i], tempX, speed);
-            LeanTween.moveLocalZ(c[i], c[i].transform.localPosition.z + 1.5f, speed).setLoopPingPong(1);
+            LeanTween.moveLocalZ(c[i], 1.5f, speed).setLoopPingPong(1);
             c[i] = temp;
 
             yield return BuildHeap(c, i, 0);
@@ -416,11 +416,11 @@ public class Sorting : MonoBehaviour
             int tempX = (int)c[i].transform.localPosition.x;
 
             LeanTween.moveLocalX(c[i], c[largest].transform.localPosition.x, speed);
-            LeanTween.moveLocalZ(c[i], c[i].transform.localPosition.z - 1.5f, speed).setLoopPingPong(1);
+            LeanTween.moveLocalZ(c[i], -1.5f, speed).setLoopPingPong(1);
             c[i] = c[largest];
 
             LeanTween.moveLocalX(c[largest], tempX, speed);
-            LeanTween.moveLocalZ(c[largest], c[largest].transform.localPosition.z + 1.5f, speed).setLoopPingPong(1);
+            LeanTween.moveLocalZ(c[largest], 1.5f, speed).setLoopPingPong(1);
             c[largest] = temp;
 
             LeanTween.color(c[i], Color.white, 0.01f);
